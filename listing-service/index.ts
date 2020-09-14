@@ -3,6 +3,7 @@ import Database from './utils/db'
 
 import GameController from './controllers/game'
 import PlayerController from './controllers/player'
+import AuthController from './controllers/auth'
 
 import conn from './utils/conn'
 
@@ -14,6 +15,7 @@ const { http, io } = conn
 Database.connect();
 
 // init routes within controllers
+AuthController.InitRoutes()
 GameController.InitRoutes()
 PlayerController.InitRoutes()
 

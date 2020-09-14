@@ -1,7 +1,7 @@
 const config = {
   api: {
-    game: '//localhost:8000',
-    player: '//localhost:8001'
+    game: '//localhost:8001',
+    player: '//localhost:8000'
   }
 }
 

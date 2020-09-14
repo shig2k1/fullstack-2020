@@ -1,14 +1,28 @@
 import axios from 'axios'
 import config from '@/config'
 
-class GameAPI {
-  static async GetUser (nickname: string) {
+type APIResponse<t> = {
+  code: number;
+  message: string;
+  data: t;
+}
+
+class BaseApi {
+  static async get (url: string) {
     try {
-      const data = await axios.get(`${config.api.player}/${nickname}`)
-      return data
+      const response = await axios.get(`${config.api.player}/${url}`)
+      console.log('response', response)
+      return response.data
     } catch (err) {
-      console.log('err', err)
+      return null
     }
+  }
+}
+
+class GameAPI extends BaseApi {
+  static async GetUser (nickname: string): Promise<APIResponse<object>> {
+    const data = await this.get(`player/${nickname}`)
+    return data
   }
 }
 

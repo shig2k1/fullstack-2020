@@ -1,0 +1,9 @@
+enum GAME_STATE {
+  LOADING,
+  LANDING_PAGE,
+  GAME_LOBBY,
+  IN_GAME,
+  GAME_OVER
+}
+
+export default GAME_STATE

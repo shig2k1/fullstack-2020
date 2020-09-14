@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import conn from '../utils/conn'
 import iRouteController from '../interfaces/iroutecontroller'
 import PlayerModel from '../models/player'
+import { hashPassword } from '../utils/auth'
 
 const { app, io } = conn
 
@@ -27,20 +28,20 @@ class PlayerController implements iRouteController {
   }
 
   async createPlayer (req: Request, res: Response) {
-    const { nickname } = req.body
-    if (!nickname) return res
+    const { username, password } = req.body
+    if (!username || !password) return res
                             .status(400)
-                            .send('nickname required')
+                            .send('username & password required')
     try {
       const playerModel = new PlayerModel({
-        nickname
+        username: username.toLowerCase(),
+        password
       })
 
       const r = await playerModel.save()
       console.log('r', r)
 
       res
-        .status(200)
         .send(r)
     } catch (err) {
       res
