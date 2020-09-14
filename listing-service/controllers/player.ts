@@ -2,19 +2,16 @@ import { Request, Response } from 'express'
 import conn from '../utils/conn'
 import iRouteController from '../interfaces/iroutecontroller'
 import PlayerModel from '../models/player'
-import { hashPassword } from '../utils/auth'
+import { checkJWT } from '../utils/auth'
+
 
 const { app, io } = conn
 
 class PlayerController implements iRouteController {
   private ROOT = 'player'
   public InitRoutes() {
-    
-    // add routes to the app
-    app.get(`/${this.ROOT}/`, this.root)
-
     // get player by nickname
-    app.get(`/${this.ROOT}/:nickname`, this.getPlayerFromNickname)
+    app.get(`/${this.ROOT}/`, checkJWT, this.GetCurrentPlayer)
 
     // create player
     app.post(`/${this.ROOT}/`, this.createPlayer)
@@ -50,17 +47,19 @@ class PlayerController implements iRouteController {
     }
   }
 
-  async getPlayerFromNickname (req: Request, res: Response) {
-    const { nickname } = req.params
-    if (!nickname) return res.status(400)
-                              .send('nickname required')
-    // find player matching nickname
-    const player = await PlayerModel.find({ nickname })
+  async GetCurrentPlayer (req: Request, res: Response) {
+    const { id, username } = res.locals.jwtPayload
+    console.log('username', username)
 
-    if (player.length > 0) return res.status(200)
-                          .send(player[0])
+    if (!username) return res.status(400)
+                              .send('username required')
+    // find player matching nickname
+    const player = await PlayerModel.findOne({ username })
+
+    if (player) return res.status(200)
+                          .send(player)
     return res.status(404)
-              .send(`Player not found with nickname: "${nickname}"`)
+              .send(`Player not found with nickname: "${username}"`)
   }
 }
 

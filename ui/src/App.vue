@@ -3,7 +3,8 @@
     // not logged in - show log in
     div(v-if="!loggedIn")
       form(@submit.prevent="login")
-        input(type="text" v-model="nickname")#nickname
+        input(type="text" v-model="userModel.username")#username
+        input(type="text" v-model="userModel.password")#password
         button(type="submit" :disabled="isLoading")
           span(v-if="!isLoading") login
           span(v-else) ...
@@ -15,6 +16,9 @@
     // logged in - show info & log out
     div(v-else)
       button(@click="logout") log out
+
+      test
+
       landing-page
 
     // check state
@@ -27,15 +31,17 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import session from '@/utils/localstorage'
-import api from '@/api'
+import authService from './api/auth.service'
 
 import LandingPage from '@/components/LandingPage.vue'
+import Test from '@/components/test.vue'
 
 const { localStorage } = session
 
 @Component({
   components: {
-    LandingPage
+    LandingPage,
+    Test
   }
 })
 export default class App extends Vue {
@@ -45,11 +51,14 @@ export default class App extends Vue {
   loggedIn = false
   isLoading = false
 
-  nickname = ''
+  userModel = {
+    username: '',
+    password: ''
+  }
 
   async login () {
     this.isLoading = true
-    const loginData = await api.GetUser(this.nickname)
+    const loginData = await authService.Login(this.userModel.username, this.userModel.password)
     if (loginData) {
       await localStorage.setItem('user', loginData)
       this.loggedIn = true

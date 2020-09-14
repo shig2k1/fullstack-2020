@@ -5,6 +5,11 @@ import store from './store'
 
 import * as io from 'socket.io-client'
 
+/* axios.interceptors.request.use(config => {
+  console.log('hmmmmm')
+  return config
+}) */
+
 const socket = io.connect('http://localhost:8000')
 
 Vue.config.productionTip = false

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 
 import conn from '../utils/conn'
 import iRouteController from '../interfaces/iroutecontroller'
@@ -18,7 +18,6 @@ class GameController implements iRouteController {
   private ROOT = 'game'
   
   public InitRoutes() {
-    
     // add routes to the app
     app.get(`/${this.ROOT}/`, this.root)
 
@@ -46,9 +45,9 @@ class GameController implements iRouteController {
 
   async Secured (req: Request, res: Response) {
     // read userId from auth middleware
-    const { id, nickname } = res.locals.jwtPayload
+    const { id, username } = res.locals.jwtPayload
 
-    res.send(`${id} ${nickname}`)
+    res.send(`${id} ${username}`)
   }
 
   async CreateGame (req: Request, res: Response) {

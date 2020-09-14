@@ -32,7 +32,6 @@ PlayerSchema.pre<IPlayer>('save', function (next: any) {
 
 // handle password compare on lookup
 PlayerSchema.methods.comparePassword = function (plaintext: string, next: any) {
-  console.log('compare password...')
   return next(null, bcrypt.compareSync(plaintext, this.password))
 }
 
