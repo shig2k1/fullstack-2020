@@ -15,12 +15,42 @@ class BaseApi {
     this.axios = axios.create(defaultOptions)
   }
 
+  setToken (token: string) {
+    const dt = new Date()
+    dt.setHours(dt.getHours() + 1)
+    Cookies.set('token', token, { expires: dt })
+  }
+
+  setSecureTokenHeader () {
+    // add interceptor for adding user oauth token header
+    this.axios.interceptors.request.use(function (config) {
+      const token = Cookies.get('token')
+      config.headers.auth = token ?? '' // token ? `Bearer ${token}` : ''
+      return config
+    })
+  }
+
   async get (url: string) {
     try {
       const response = await this.axios
         .get(`${config.api.player}/${url}`)
 
       console.log('response', response)
+      return response.data
+    } catch (err) {
+      return null
+    }
+  }
+
+  async sGet (url: string) {
+    try {
+      this.setSecureTokenHeader()
+      const response = await this.axios
+        .get(`${config.api.player}/${url}`)
+      // no response  - return
+      if (!response) return
+      const { token } = response.headers
+      this.setToken(token)
       return response.data
     } catch (err) {
       return null
@@ -39,24 +69,15 @@ class BaseApi {
     }
   }
 
-  async sGet (url: string) {
+  async sPost (url: string, data: any) {
     try {
-      // add interceptor for adding user oauth token header
-      this.axios.interceptors.request.use(function (config) {
-        const token = Cookies.get('token')
-        config.headers.auth = token ?? '' // token ? `Bearer ${token}` : ''
-        return config
-      })
-
+      this.setSecureTokenHeader()
       const response = await this.axios
-        .get(`${config.api.player}/${url}`)
-
+        .post(`${config.api.player}/${url}`, data)
+      // no response  - return
       if (!response) return
       const { token } = response.headers
-      console.log('t', token)
-      Cookies.set('token', token)
-
-      console.log('response', response)
+      this.setToken(token)
       return response.data
     } catch (err) {
       return null

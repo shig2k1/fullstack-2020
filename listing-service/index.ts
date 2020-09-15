@@ -27,3 +27,7 @@ http.listen(PORT, () => {
 io.on('connection', (socket: any) => {
   console.log('a user connected FUCK YEAH!!!')
 })
+
+io.on('disconnection', (socket: any) => {
+  console.log('a user disconnected')
+})

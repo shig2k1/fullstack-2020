@@ -1,5 +1,10 @@
 import BaseAPI from './base'
-import Cookies from 'js-cookie'
+
+type APIResponse<t> = {
+  code: number;
+  message: string;
+  data: t;
+}
 
 class AuthAPI extends BaseAPI {
   async Login (username: string, password: string): Promise<any> {
@@ -8,9 +13,14 @@ class AuthAPI extends BaseAPI {
       password
     })
     if (data) {
-      Cookies.set('token', data.access_token)
+      this.setToken(data.access_token)
       return data
     }
+  }
+
+  async GetUser (): Promise<APIResponse<any>> {
+    const data = await this.sGet('player')
+    return data
   }
 }
 

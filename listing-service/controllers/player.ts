@@ -4,7 +4,6 @@ import iRouteController from '../interfaces/iroutecontroller'
 import PlayerModel from '../models/player'
 import { checkJWT } from '../utils/auth'
 
-
 const { app, io } = conn
 
 class PlayerController implements iRouteController {
@@ -36,7 +35,6 @@ class PlayerController implements iRouteController {
       })
 
       const r = await playerModel.save()
-      console.log('r', r)
 
       res
         .send(r)

@@ -15,6 +15,8 @@
 
     // logged in - show info & log out
     div(v-else)
+      pre user {{ user }}
+
       button(@click="logout") log out
 
       test
@@ -36,6 +38,8 @@ import authService from './api/auth.service'
 import LandingPage from '@/components/LandingPage.vue'
 import Test from '@/components/test.vue'
 
+import Cookies from 'js-cookie'
+
 const { localStorage } = session
 
 @Component({
@@ -56,12 +60,17 @@ export default class App extends Vue {
     password: ''
   }
 
+  get user () {
+    return this.$store.state.user
+  }
+
   async login () {
     this.isLoading = true
     const loginData = await authService.Login(this.userModel.username, this.userModel.password)
     if (loginData) {
       await localStorage.setItem('user', loginData)
       this.loggedIn = true
+      this.checkLogin()
     }
     this.isLoading = false
   }
@@ -83,17 +92,22 @@ export default class App extends Vue {
     console.log('yo!!!', data)
   }
 
-  async created () {
-    const user = await localStorage.getItem('user')
-    // check is a user logged in
-
+  checkLogin () {
+    const token = Cookies.get('token')
     // check if the user is in a game already
-    if (user) {
-      console.log('user', user)
+    if (token) {
+      console.log('user', token)
+      this.$store.dispatch('checkLogin', { token })
       this.loggedIn = true
     } else {
       console.log('no user')
     }
+  }
+
+  async created () {
+    // const user = await localStorage.getItem('user')
+    // check is a user logged in
+    this.checkLogin()
   }
 
   destroyed () {

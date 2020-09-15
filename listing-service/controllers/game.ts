@@ -27,6 +27,7 @@ class GameController implements iRouteController {
     app.post(`/${this.ROOT}/create`, this.CreateGame)
 
     // delete game
+    app.delete(`/${this.ROOT}/:gameId`, this.DeleteGame)
 
     // player join game
     app.post(`/${this.ROOT}/:gameId/join`, this.PlayerJoinGame)
@@ -70,6 +71,19 @@ class GameController implements iRouteController {
          .send(err)
     }
     res.send('yo!')
+  }
+
+  async DeleteGame (req: Request, res: Response) {
+    const { gameId } = req.params
+    try {
+      await GameModel.deleteOne({ _id: gameId })
+      res.status(200)
+         .send('ok')
+    } catch (err) {
+      console.log('err', err)
+      res.status(500)
+         .send(err)
+    }
   }
 
   async PlayerJoinGame (req: Request, res: Response) {

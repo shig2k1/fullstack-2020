@@ -1,14 +1,8 @@
 import BaseApi from './base'
 
-type APIResponse<t> = {
-  code: number;
-  message: string;
-  data: t;
-}
-
 class GameAPI extends BaseApi {
-  async GetUser (): Promise<APIResponse<object>> {
-    const data = await this.sGet('player')
+  async CreateGame (owner: string) {
+    const data = await this.sPost('/game/create', { owner })
     return data
   }
 }

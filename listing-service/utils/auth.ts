@@ -17,14 +17,13 @@ function signJWT(id: string, username: string) {
 // middleware - intercept the request, check for auth, issue new token if valid
 const checkJWT = (req: Request, res: Response, next: NextFunction ) => {
   const token = <string>req.headers['auth']
-  
+
+  // add headers so token can be read by client
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
   res.header('Access-Control-Expose-Headers', 'token')
-    
-  console.log('Boop!')
+
   if (!token) return res.status(401).send('no auth token')
   try {
-    console.log('token:::', token)
     const jwtPayload = <any>jwt.verify(token, config.secret)
     // store in locals so controller after middleware can access this
     res.locals.jwtPayload = jwtPayload
